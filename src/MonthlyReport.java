@@ -114,4 +114,10 @@ public class MonthlyReport {
             System.out.println("Данные по месячным отчетам уже имеются. Повторная загрузка не требуется");
         }
     }
+
+    public void getSummaryGainOrCostForMonth(int month, boolean isExpense){
+        if(isExpense){
+
+        }
+    }
 }
