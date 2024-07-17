@@ -12,6 +12,8 @@ import java.util.Scanner;
 
 public class MonthlyReport {
     HashMap<Integer, ArrayList<MonthlyRecord>> monthlyRecords = new HashMap<>();
+    String[] monthTitle = {"январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь",
+            "октябрь", "ноябрь", "декабрь"};
     //Считывание
     private void readMonthlyReports() throws IOException {
         for (int month = 0; month < 12; month++){
@@ -45,8 +47,63 @@ public class MonthlyReport {
     }
 
     //Определение самого прибыльного товара
+    private void defineMaxGain(){
+        for(Integer monthIndex : monthlyRecords.keySet()){
+            int maxSum = Integer.MIN_VALUE;
+            String maxItemName = null;
+            ArrayList<MonthlyRecord> month = monthlyRecords.get(monthIndex);
+            for(MonthlyRecord el : month){
+                if(!el.isExpense){
+                    int total = el.quantity * el.sumOfOne;
+                    if(total > maxSum){
+                        maxSum = total;
+                        maxItemName = el.itemName;
+                    }
+                }
+            }
+            System.out.println("Самый прибыльный товар за " + monthTitle[monthIndex - 1] + ": " + maxItemName + ", Сумма: "+maxSum);
+        }
+    }
 
     //Определение самого убыточного товара
-    //Печать статистики
+    private void defineMaxExpense(){
+        for(Integer monthIndex : monthlyRecords.keySet()){
+            int maxSum = Integer.MAX_VALUE;
+            String maxItemName = null;
+            ArrayList<MonthlyRecord> month = monthlyRecords.get(monthIndex);
+            for(MonthlyRecord el : month){
+                if(el.isExpense){
+                    int total = el.quantity * el.sumOfOne;
+                    if(total < maxSum){
+                        maxSum = total;
+                        maxItemName = el.itemName;
+                    }
+                }
+            }
+            System.out.println("Самый убыточный товар за " + monthTitle[monthIndex - 1] + ": " + maxItemName + ", Сумма: "+maxSum);
+        }
+    }
 
+    //подгрузка отчетов
+    public void downloadMonthlyReports() throws IOException {
+        if(monthlyRecords.isEmpty()){
+            readMonthlyReports();
+            System.out.println("Месячные отчеты успешно загружены. \n");
+        } else {
+            System.out.println("Данные о месячных отчетах уже имеются. Нет необходимости в загрузке");
+        }
+    }
+
+    //Печать статистики
+    public void printMonthlyStatistic(){
+        if(monthlyRecords.isEmpty()){
+            System.out.println("Для вывода статистики необходимо подгрузить месячные отчеты.");
+        } else {
+            System.out.println("Статистика по самым прибыльным позициям:");
+            defineMaxGain();
+            System.out.println();
+            System.out.println("Статистика по самым убыточным позициям:");
+            defineMaxExpense();
+        }
+    }
 }
