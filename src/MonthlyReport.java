@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 public class MonthlyReport {
     HashMap<Integer, ArrayList<MonthlyRecord>> monthlyRecords = new HashMap<>();
+    HashMap<Integer, Integer> totalPerMonth = new HashMap<>();
     String[] monthTitle = {"январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь",
             "октябрь", "ноябрь", "декабрь"};
     //Считывание
@@ -43,24 +44,26 @@ public class MonthlyReport {
                 monthlyRecords.put(month, monthRecord);
             }
         }
-        System.out.println(monthlyRecords);
     }
 
     //Определение самого прибыльного товара
     private void defineMaxGain(){
         for(Integer monthIndex : monthlyRecords.keySet()){
             int maxSum = Integer.MIN_VALUE;
+            int sumOfAll = 0;
             String maxItemName = null;
             ArrayList<MonthlyRecord> month = monthlyRecords.get(monthIndex);
             for(MonthlyRecord el : month){
                 if(!el.isExpense){
                     int total = el.quantity * el.sumOfOne;
+                    sumOfAll += total;
                     if(total > maxSum){
                         maxSum = total;
                         maxItemName = el.itemName;
                     }
                 }
             }
+            totalPerMonth.put(monthIndex, sumOfAll);
             System.out.println("Самый прибыльный товар за " + monthTitle[monthIndex - 1] + ": " + maxItemName + ", Сумма: "+maxSum);
         }
     }
@@ -69,17 +72,20 @@ public class MonthlyReport {
     private void defineMaxExpense(){
         for(Integer monthIndex : monthlyRecords.keySet()){
             int maxSum = Integer.MAX_VALUE;
+            int maxLose = 0;
             String maxItemName = null;
             ArrayList<MonthlyRecord> month = monthlyRecords.get(monthIndex);
             for(MonthlyRecord el : month){
                 if(el.isExpense){
                     int total = el.quantity * el.sumOfOne;
+                    maxLose += total;
                     if(total < maxSum){
                         maxSum = total;
                         maxItemName = el.itemName;
                     }
                 }
             }
+            totalPerMonth.put(monthIndex, totalPerMonth.get(monthIndex) - maxLose);
             System.out.println("Самый убыточный товар за " + monthTitle[monthIndex - 1] + ": " + maxItemName + ", Сумма: "+maxSum);
         }
     }
